@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import ProductList from './ProductList'
 import './productList.css'
+import { connect } from 'react-redux'
+import { loginUser } from '../../redux/userReducer'
 
 class ProductListContainer extends Component {
   constructor() {
@@ -16,24 +18,32 @@ class ProductListContainer extends Component {
     })
   }
   render() {
+    console.log(this.props)
+
     return (
       <div className="container">
         <h1 className="product-list-head">
-          'Log in to see products'
+          {this.props.userReducer.isLoggedIn ? 'All of our products' : 'Log in to see products'}
         </h1>
-        <div className="form">
-        <input
-            name="userInput"
-            placeholder="Username"
-            onChange={this.handleChange}
-        />
-        <button>
-            Sign In
-        </button>
-        </div>
+        { 
+          this.props.userReducer.isLoggedIn ? <ProductList /> : (
+          <div className="form">
+          <input
+              name="userInput"
+              placeholder="Username"
+              onChange={this.handleChange}
+          />
+          <button onClick={() => this.props.loginUser(this.state.userInput)}>
+              Sign In
+          </button>
+          </div>
+          )
+        }
       </div>
     )
   }
 }
 
-export default ProductListContainer
+const mapStateToProps = reduxState => reduxState
+
+export default connect(mapStateToProps, { loginUser })(ProductListContainer)
